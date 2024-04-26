@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <script defer src="https://cdn.socket.io/4.7.2/socket.io.js"></script>
+    <!-- <script defer src="animate.js"></script> -->
+    <script defer src="index.js"></script>
+
+    <div class="main">
+        <div class="main_holder">
+
+            <div class="holder">
+                <form action="" class="frm">
+                    <span class="name">ChatApp</span>
+    
+                    <label for="user">UserName</label>
+                    <input type="text" id="user" class="user">
+                    
+                    <label for="room">RoomName</label>
+                    <input type="text" id="room" class="room">
+    
+                    <button id="submit" class="btn">Create Room</button>
+                </form>
+    
+                <button class="join">Join Chat</button>
+            </div>
+    
+    
+            <div class="holder2">
+                <form action="" class="frm frm2">
+                    <span class="name">ChatApp</span>
+    
+                    <label for="user">UserName</label>
+                    <input type="text" id="user1" class="user">
+                    
+                    <label for="room">RoomName</label>
+                    <input type="text" id="room1" class="room">
+    
+                    <button id="submit2" class="btn2">Join Room</button>
+                </form>
+    
+                <button class="back">Go Back</button>
+            </div>
+
+        </div>
+        
+    </div>
+
+    <script>
+        const join_btn = document.querySelector('.join');
+
+        const back_btn = document.querySelector('.back'); 
+
+        back_btn.style.visibility = 'hidden';
+
+        let main_hold = document.querySelector('.main_holder');
+
+        join_btn.addEventListener('click',()=>{          
+            main_hold.style.transform = 'rotateY(180deg) rotateZ(180deg)';
+            main_hold.style.transition = 'transform 1.3s';
+
+            setTimeout(()=>{
+                back_btn.style.visibility = 'initial';
+            },500);
+        })
+
+        back_btn.addEventListener('click',()=>{
+            main_hold.style.transform = 'rotateY(0deg) rotateZ(0deg)';
+            main_hold.style.transition = 'transform 1.3s';
+
+            setTimeout(()=>{
+                back_btn.style.visibility = 'hidden';
+            },500)
+        })
+    </script>
+
+</body>
+</html>

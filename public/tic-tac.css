@@ -1,0 +1,116 @@
+@font-face {
+    font-family: varela;
+    src: url('./Font/VarelaRound-Regular.ttf');
+}
+*{
+    padding: 0;
+    margin: 0;
+}
+ul{
+    list-style: none;
+}
+.title{
+    background-color: black;
+    color: white;
+    height: 3.5rem;
+    font-family: varela;
+    font-weight: 1000;
+    font-size: xx-large;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.Gamecontainer{
+    /*background-color: yellow;*/
+    height: fit-content;
+}
+.container{
+    height: fit-content;
+    margin-top: 3rem;
+    margin-right: 18rem;
+    display: grid;
+    grid-template-columns: repeat(3, 120px);
+    grid-template-rows: repeat(3,120px);
+    font-family: varela;
+    justify-content: center;
+}
+.box{
+   /* background-color: yellow;*/
+    border: solid black .15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.box:hover{
+    cursor: pointer;
+    background-color:rgb(217, 180, 252);
+}
+.boxtext{
+    font-size: 7rem;
+}
+.b0{
+    border-top: 0;
+}
+.b1{
+    border-right: 0;
+}
+.b2{
+    border-left: 0;
+}
+.b3{
+    border-bottom: 0;
+}
+#reset,reset:hover{
+    position: absolute;
+    font-family: varela;
+    background-color: yellow;
+    font-weight: 1000;
+    font-size: 1.5rem;
+    border-radius: 10px;
+    left: 50rem;
+    bottom: 27rem;
+    width: 5.5rem;
+    height: 3rem;
+    border: 0px;
+    cursor: pointer;
+}
+.welcome{
+    font-size: 1.5rem;
+    font-family: varela;
+    font-weight: 1000;
+    position: relative;
+    left: 46rem;
+    top: 2rem;
+}
+.info{
+    position: absolute;
+    font-size: 1.5rem;
+    font-family: varela;
+    left: 50rem;
+    bottom: 24rem;
+    color: black;
+}
+@media(max-width:414px) {
+    .container{
+        margin-top: 5rem;
+        margin-left: 13rem;
+    }
+    .welcome{
+        top: 1.5rem;
+        left: 4rem;
+        font-size: 1.7rem;
+    }
+    #reset{
+        left: 8.5rem;
+        bottom: 10rem;
+        width: 8.5rem;
+        height: 4.5rem;
+        font-size: 2rem;
+    }
+    .info{
+        left: 8.2rem;
+        bottom: 16rem;
+        font-weight: 1000;
+        font-size:2rem;
+    }
+}
