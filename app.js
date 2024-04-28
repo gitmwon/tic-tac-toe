@@ -15,8 +15,8 @@ const { forEach } = require("lodash");
 
 app.use(express.json());
 
-const exserver = app.listen(8080, "0.0.0.0", () => {
-  console.log("server started at port 8080");
+const exserver = app.listen(10000, "0.0.0.0", () => {
+  console.log("server started at port 10000");
 });
 
 const io = new Server(exserver);
