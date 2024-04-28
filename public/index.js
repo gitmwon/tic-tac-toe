@@ -4,38 +4,34 @@ let submit = document.getElementsByClassName("btn");
 let submit2 = document.getElementsByClassName("btn2");
 let locval = "";
 
-socket.on("sendUsers",(room,loc)=>{
-    socket.emit("forwardUsers",room,loc)
-})
+socket.on("sendUsers", (room, loc) => {
+  socket.emit("forwardUsers", room, loc,socket.id);
+});
 
 socket.on("initialRedirect", (val) => {
-    window.location.href = val;
-  });  
+  window.location.href = val;
+});
 
-socket.on("redirect",(creatorURL)=>{
-    window.location.href = locval;
-})
+socket.on("redirect", (creatorURL) => {
+  window.location.href = locval;
+});
 
-submit[0].addEventListener('click',(e)=>{
+submit[0].addEventListener("click", (e) => {
+  e.preventDefault();
 
-    e.preventDefault();
+  const name1 = document.getElementById("user").value;
+  const room = document.getElementById("room").value;
 
-    const name1 = document.getElementById('user').value;
-    const room = document.getElementById('room').value;
+  let locate = `./tic-tac.html?user=${name1}&room=${room}&id=${socket.id}`;
+  socket.emit("userCreated", locate, room, name1);
+});
 
-    let locate = `./tic-tac.html?user=${name1}&room=${room}`;
-    socket.emit("userCreated",locate,room,name1);
+submit2[0].addEventListener("click", (e) => {
+  e.preventDefault();
+  const name1 = document.getElementById("user1").value;
+  const room = document.getElementById("room1").value;
 
-})
-
-submit2[0].addEventListener('click',(e)=>{
-
-    e.preventDefault();
-    const name1 = document.getElementById('user1').value;
-    const room = document.getElementById('room1').value;
-
-    let locate = `./tic-tac.html?user=${name1}&room=${room}`;
-    locval = locate;
-    socket.emit("userJoined",locate,room,name1);   
-})
-
+  let locate = `./tic-tac.html?user=${name1}&room=${room}&id=${socket.id}`;
+  locval = locate;
+  socket.emit("userJoined", locate, room, name1);
+});

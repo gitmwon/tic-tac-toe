@@ -2,9 +2,12 @@ console.log("Welcome to TicTacToe");
 
 const socket = io(window.location.origin);
 
+// import socket from "./index.js";
+
 const params = window.location.search;
 const room = new URLSearchParams(params).get("room");
 const user = new URLSearchParams(params).get("user");
+const uid = new URLSearchParams(params).get("id");
 
 let flag = false;
 
@@ -26,11 +29,11 @@ socket.on("turn", (e) => {
 
 //initial data fetch and allocation from dataBase
 socket.on("fetchData", (data) => {
-  data.forEach((e)=>{
-    if(e.room == room){
+  data.forEach((e) => {
+    if (e.room == room) {
       document.getElementById(e.loc).innerText = e.value;
     }
-  })
+  });
 });
 
 //win logic
@@ -55,14 +58,14 @@ let checkwin = () => {
     ) {
       document.getElementsByClassName("info")[0].innerText =
         boxtext[element[0]].innerText + " won";
-        gameover = true;
+      gameover = true;
     }
   });
 };
 
-socket.on("userwon",()=>{
+socket.on("userwon", () => {
   checkwin();
-})
+});
 
 //listen for clicks from server
 
@@ -86,6 +89,12 @@ socket.on("reverse", () => {
   console.log(flag);
 });
 
+//sending heartbeat to server
+setInterval(() => {
+  socket.emit("heartbeat", uid);
+  console.log(socket.id);
+}, 5000);
+
 //click logic
 Array.from(box).forEach((element) => {
   element.addEventListener("click", () => {
@@ -100,8 +109,8 @@ Array.from(box).forEach((element) => {
         const user = new URLSearchParams(params).get("user");
         socket.emit("locval", user, room, element.classList[1], turn);
         socket.emit("getTurn", room);
-        socket.emit("userData", user, boxtext.id, turn,room);
-        socket.emit("checkwin",room);
+        socket.emit("userData", user, boxtext.id, turn, room);
+        socket.emit("checkwin", room);
         if (!gameover) {
           document.getElementsByClassName("info")[0].innerText =
             "Turn for " + turn;

@@ -10,12 +10,12 @@ app.get("/", (req, res) => {
   res.redirect("/index.html");
 });
 
-const { User, Datas, db} = require("./config.js");
+const { User, Datas, db } = require("./config.js");
 const { forEach } = require("lodash");
 
 app.use(express.json());
 
-const exserver = app.listen(8080,"0.0.0.0", () => {
+const exserver = app.listen(8080, "0.0.0.0", () => {
   console.log("server started at port 8080");
 });
 
@@ -34,46 +34,48 @@ io.on("connection", (socket) => {
   const ary = [];
 
   const getData = async () => {
-  try {
-    const querySnapshot = await db.collection('data').get();
+    try {
+      const querySnapshot = await db.collection("data").get();
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const obj = {
+          name: data.user,
+          loc: data.loc,
+          socketID: data.socketID,
+          value: data.value,
+          room: data.room,
+        };
+        ary.push(obj);
+      });
+
+      socket.emit("fetchData", ary);
+      //console.log(ary);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  getData();
+
+  socket.on("clearData", async () => {
+    const querySnapshot = await db.collection("data").get();
     querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      const obj={
-        "name":data.user,
-        "loc":data.loc,
-        "socketID":data.socketID,
-        "value":data.value,
-        "room":data.room,
-      }
-      ary.push(obj);
-    });
-
-    socket.emit("fetchData",ary);
-    //console.log(ary);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-};
-
-getData();
-
-  socket.on("clearData",async()=>{
-    const querySnapshot = await db.collection('data').get();
-    querySnapshot.forEach((doc)=>{
       doc.ref.delete();
-    })
-  })
+    });
+  });
 
   socket.on("userCreated", async (loc, room, name) => {
     User.add({
       name: name,
       room: room,
-      socketID:socket.id,
+      socketID: socket.id,
       urlVal: loc,
+      lastTime: new Date().getTime(),
     })
       .then((docRef) => {
         console.log(`Added user ${name}`);
-        socket.emit("sendUsers", room, loc);
+
+        socket.emit("sendUsers", room, loc, socket.id);
         return User.doc(docRef.id).update({
           id: docRef.id,
         });
@@ -83,12 +85,12 @@ getData();
       });
   });
 
-  socket.on("forwardUsers", async (room, loc) => {
+  socket.on("forwardUsers", async (room, loc,Uid) => {
     const rooms = await User.where("room", "==", room).get();
     const [roomsSnapshot] = await Promise.all([rooms]);
 
     if (roomsSnapshot.size < 2) {
-      socket.emit("initialRedirect", "/waiting.html");
+      socket.emit("initialRedirect", `/waiting.html?id=${Uid}`);
     } else {
       io.emit("redirect", loc);
     }
@@ -117,11 +119,13 @@ getData();
         User.add({
           name: name,
           room: room,
-          socketID:socket.id,
+          socketID: socket.id,
+          lastTime: new Date().getTime(),
           urlVal: "",
         })
           .then((docRef) => {
             console.log(`Added user ${name}`);
+
             return User.doc(docRef.id).update({
               id: docRef.id,
             });
@@ -168,14 +172,67 @@ getData();
     turn = changeTurn();
   });
 
+  //check if client disconnected
+
+  socket.on("heartbeat", (val) => {
+    //console.log("heartbeat:",val);
+    const docRef = db.collection("users").where("socketID", "==", val);
+
+    docRef
+      .get()
+      .then((snapShot) => {
+        snapShot.forEach((doc) => {
+          const dataval = { lastTime: new Date().getTime() };
+          db.collection("users")
+            .doc(doc.id)
+            .update(dataval)
+            .then(() => {
+              console.log("document updated !!!");
+              console.log(doc.data().socketID, doc.data().lastTime);
+            })
+            .catch((error) => {
+              console.log("error");
+            });
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  });
+
+  async function checkDisconnected () {
+    const currentTime = new Date().getTime();
+
+    const docRef = await db.collection("users");
+    docRef.get().then((snapShot) => {
+      snapShot.forEach((doc) => {
+        if (doc.data().lastTime !== undefined && doc.data().lastTime !== null) {
+            const timeDelay = currentTime - doc.data().lastTime;
+            if (timeDelay > 10000) {
+              console.log(
+                doc.data().socketID,
+                timeDelay,
+                " disconnected"
+              );
+              db.collection("users").doc(doc.id).delete().then(()=>{
+                console.log("UserData removed from db");
+              })
+            }
+        } else {
+          console.log("socketId:", doc.data().socketID, "Timedelay: Not available");
+        }
+      });
+    });
+  }
+
   //store in DataBase
 
-  socket.on("userData", (user, id, value,room) => {
+  socket.on("userData", (user, id, value, room) => {
     console.log(user, id, value);
     Datas.add({
       user,
       loc: id,
-      socketID:socket.id,
+      socketID: socket.id,
       value,
       room,
     })
@@ -187,23 +244,9 @@ getData();
       });
   });
 
-  socket.on("checkwin",(room)=>{
+  socket.on("checkwin", (room) => {
     io.to(room).emit("userwon");
-  })
+  });
 
-//   socket.on("disconnect",async ()=>{
-//     const user = socket.id;
-//     const dltuser = await User.where("socketID","==",user).get();
-//     //const datas = await Datas.where("socketID","==",user).get();
-//     try{
-//       // const [dltuserSnapshot] = Promise.all([dltuser]);
-//       // dltuserSnapshot.forEach((e)=>{
-//       //   console.log(e.data().name);
-//       // })
-//       console.log("dltuser");
-//     }catch(error){
-//       console.log(error);
-//     }
-//   })
-
- });
+  setInterval(checkDisconnected, 5000);
+});
