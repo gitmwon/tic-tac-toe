@@ -90,9 +90,12 @@ io.on("connection", (socket) => {
     const [roomsSnapshot] = await Promise.all([rooms]);
 
     if (roomsSnapshot.size < 2) {
-      socket.emit("initialRedirect", `/waiting.html?id=${Uid}`);
+      // socket.emit("initialRedirect", `/waiting.html?id=${Uid}`);
+      console.log("< 2 players")
+      socket.emit("showLoader");
     } else {
-      io.emit("redirect", loc);
+      console.log("> 2 players");
+      io.emit("redirect",loc);
     }
   });
 
@@ -205,7 +208,7 @@ io.on("connection", (socket) => {
 
     const docRef = await db.collection("users");
     docRef.get().then((snapShot) => {
-      snapShot.forEach((doc) => {
+      snapShot.forEach(async (doc) => {
         if (doc.data().lastTime !== undefined && doc.data().lastTime !== null) {
             const timeDelay = currentTime - doc.data().lastTime;
             if (timeDelay > 10000) {
@@ -215,8 +218,19 @@ io.on("connection", (socket) => {
                 " disconnected"
               );
               db.collection("users").doc(doc.id).delete().then(()=>{
-                console.log("UserData removed from db");
+                console.log("userData removed from db");
               })
+
+              db.collection("data").where("room","==",doc.data().room).get().then((Snapshot)=>{
+                Snapshot.forEach((doc)=>{
+                  doc.ref.delete().then(()=>{
+                    console.log("UserData removed from db");
+                  }).catch((error)=>{
+                    console.log(error);
+                  })
+                })
+              })
+              
             }
         } else {
           console.log("socketId:", doc.data().socketID, "Timedelay: Not available");

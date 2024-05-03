@@ -11,28 +11,25 @@
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script defer src="tic-tac.js"></script>
-    <nav class="title">
-        <ul class="maintitle">
-            <li class="subtitle">Tic-Tac-Toe</li>
-        </ul>
-    </nav>
+    <span class="welcome">Welcome to Tic-Tac-Toe</span>
     <div class="Gamecontainer">
-        <span class="welcome">Welcome to Tic-Tac-Toe</span>
-        <div class="container">
-          <div class="box bx1 b0 b2"><span class="boxtext" id="d1"></span></div>
-          <div class="box bx2 b0"><span class="boxtext" id="d2"></span></div>
-          <div class="box bx3 b0 b1"><span class="boxtext" id="d3"></span></div>
-          <div class="box bx4 b2"><span class="boxtext" id="d4"></span></div>
-          <div class="box bx5" ><span class="boxtext" id="d5"></span></div>
-          <div class="box bx6 b1"><span class="boxtext" id="d6"></span></div>
-          <div class="box bx7 b2 b3"><span class="boxtext" id="d7"></span></div>
-          <div class="box bx8 b3"><span class="boxtext" id="d8"></span></div>
-          <div class="box bx9 b3 b1"><span class="boxtext" id="d9"></span></div>
+        <div class="pt1">
+            <div class="container">
+                <div class="box bx1 b0 b2"><span class="boxtext" id="d1"></span></div>
+                <div class="box bx2 b0"><span class="boxtext" id="d2"></span></div>
+                <div class="box bx3 b0 b1"><span class="boxtext" id="d3"></span></div>
+                <div class="box bx4 b2"><span class="boxtext" id="d4"></span></div>
+                <div class="box bx5" ><span class="boxtext" id="d5"></span></div>
+                <div class="box bx6 b1"><span class="boxtext" id="d6"></span></div>
+                <div class="box bx7 b2 b3"><span class="boxtext" id="d7"></span></div>
+                <div class="box bx8 b3"><span class="boxtext" id="d8"></span></div>
+                <div class="box bx9 b3 b1"><span class="boxtext" id="d9"></span></div>
+              </div>
         </div>
-        
-        <span class="info">Turn for x</span>
-        <button id="reset">Reset</button>
-        
+        <div class="pt2">
+            <span class="info">Turn for x</span>
+            <button id="reset">Reset</button>
+        </div>
     </div>
 </body>
 </html>

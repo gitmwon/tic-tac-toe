@@ -59,6 +59,11 @@ let checkwin = () => {
       document.getElementsByClassName("info")[0].innerText =
         boxtext[element[0]].innerText + " won";
       gameover = true;
+      flag = true;
+
+      boxtext[element[0]].parentNode.style.backgroundColor = "rgb(217, 180, 252)";
+      boxtext[element[1]].parentNode.style.backgroundColor = "rgb(217, 180, 252)";
+      boxtext[element[2]].parentNode.style.backgroundColor = "rgb(217, 180, 252)";
     }
   });
 };
@@ -126,8 +131,11 @@ reset.addEventListener("click", () => {
   let boxtext = document.querySelectorAll(".boxtext");
   Array.from(boxtext).forEach((element) => {
     element.innerText = "";
-    turn = "x";
     gameover = false;
+    flag = false;
+    boxtext.forEach((e)=>{
+      e.parentNode.style.backgroundColor = "";
+    })
     document.getElementsByClassName("info")[0].innerText = "Turn for " + turn;
   });
 });
